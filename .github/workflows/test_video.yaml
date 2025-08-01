@@ -1,0 +1,116 @@
+# SPDX-FileCopyrightText: Copyright 2022-2025 Arm Limited and/or its
+# affiliates <open-source-office@arm.com>
+# SPDX-License-Identifier: Apache-2.0
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
+name: mlek audio build and execution test
+on:
+
+  workflow_dispatch:
+  #pull_request:
+  #  branches: [main]
+  #push:
+  #  branches: [main]
+  #schedule:
+  #  - cron: '00 20 * * 6'
+
+
+jobs:
+  CI:
+    strategy:  
+      matrix:
+        context: [
+          {proj: object-detection,  build_type: Release-Data_Array, target_type: AVH-SSE-300-U55,  model: FVP_Corstone_SSE-300_Ethos-U55,  fvp_dir: Corstone-300,  args: '-C mps3_board.v_path=./board/Corstone-300/vsi/python/',  mps: mps3},
+          {proj: object-detection,  build_type: Debug-Data_Array,   target_type: AVH-SSE-300-U55,  model: FVP_Corstone_SSE-300_Ethos-U55,  fvp_dir: Corstone-300,  args: '-C mps3_board.v_path=./board/Corstone-300/vsi/python/',  mps: mps3}
+        ]
+
+      fail-fast: false
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Activate vcpkg
+      uses: ARM-software/cmsis-actions/vcpkg@v1
+      with: 
+        config: "./vcpkg-configuration.json"
+
+    - name: Activate Arm tool license
+      uses: ARM-software/cmsis-actions/armlm@v1
+
+    - name: Cache downloaded packs
+      uses: actions/cache@v4
+      with:
+        key: cmsis-packs-download
+        path: /home/runner/.cache/arm/packs/.Download
+
+    - name: Initialize CMSIS pack root folder
+      run: |
+        cpackget init https://www.keil.com/pack/index.pidx
+        cpackget update-index
+
+    - name: Install python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.9'
+
+    - name: Install opencv-python
+      run: |
+        pip install opencv-python
+        pip list
+        pip show opencv-python
+        python -c "import cv2; print('Installed cv2 version: ', cv2.__version__)"
+
+    - name: Cache downloaded packs
+      if: always()    
+      uses: actions/cache@v4
+      with:
+        key: cmsis-mlek-download
+        path: /home/runner/.cache/arm/packs/.Download
+
+    - name: AC6-Build-Test 4 context ${{matrix.context.proj}}.${{matrix.context.build_type}}+${{matrix.context.target_type}}
+      working-directory: ./Alif/AppKit_D3/MLEK_Video
+      run: |
+        cbuild mlek_audio.csolution.yml --packs --update-rte \
+        --context ${{matrix.context.proj}}.${{matrix.context.build_type}}+${{matrix.context.target_type}} \
+        --toolchain AC6 --rebuild
+
+    # - name: AC6-Execution-Test 4 context ${{matrix.context.proj}}.${{matrix.context.build_type}}+${{matrix.context.target_type}}
+    #   working-directory: ./Alif/AppKit_D3/MLEK_Video
+    #   run: |
+    #     ${{ matrix.context.model }} \
+    #     -a ./out/${{matrix.context.proj}}/${{matrix.context.target_type}}/${{matrix.context.build_type}}/${{matrix.context.proj}}.axf \
+    #     -f ./board/${{matrix.context.fvp_dir}}/fvp_config.txt \
+    #     ${{matrix.context.args}} \
+    #     -C ${{matrix.context.mps}}_board.telnetterminal0.start_telnet=0 \
+    #     -C ${{matrix.context.mps}}_board.uart0.out_file=fvp_stdout_${{matrix.context.build_type}}_${{matrix.context.target_type}}_${{matrix.context.model}}.log \
+    #     --simlimit 30
+
+    # - name: Show and check FVP UART output for fvp_stdout_${{matrix.context.build_type}}_${{matrix.context.target_type}}_${{matrix.context.model}}.log
+    #   working-directory: ./Alif/AppKit_D3/MLEK_Video
+    #   run: |
+    #     echo "Show FVP UART output..."
+    #     cat fvp_stdout_${{matrix.context.build_type}}_${{matrix.context.target_type}}_${{matrix.context.model}}.log
+    #     echo "Checking FVP UART output..."
+    #     test "$(grep "FAIL: " fvp_stdout_${{matrix.context.build_type}}_${{matrix.context.target_type}}_${{matrix.context.model}}.log | wc -l)" -eq 0
+
+    # - name: Upload FVP UART output for ${{matrix.context.build_type}}_${{matrix.context.target_type}}_${{matrix.context.model}}.log
+    #  uses: actions/upload-artifact@v4
+    #  with:
+    #    name: fvp_stdout_${{matrix.context.build_type}}_${{matrix.context.target_type}}_${{matrix.context.model}}.log
+    #    path: ./Alif/AppKit_D3/MLEK_Video/fvp_stdout_${{matrix.context.build_type}}_${{matrix.context.target_type}}_${{matrix.context.model}}.log
+
