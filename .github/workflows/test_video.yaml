@@ -85,7 +85,7 @@ jobs:
     - name: AC6-Build-Test 4 context ${{matrix.context.proj}}.${{matrix.context.build_type}}+${{matrix.context.target_type}}
       working-directory: ./Alif/AppKit_D3/MLEK_Video
       run: |
-        cbuild mlek_audio.csolution.yml --packs --update-rte \
+        cbuild mlek_video.csolution.yml --packs --update-rte \
         --context ${{matrix.context.proj}}.${{matrix.context.build_type}}+${{matrix.context.target_type}} \
         --toolchain AC6 --rebuild
 
