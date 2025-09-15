@@ -89,6 +89,12 @@ jobs:
         --context ${{matrix.context.proj}}.${{matrix.context.build_type}}+${{matrix.context.target_type}} \
         --toolchain AC6 --rebuild
 
+    - name: Upload AC6 build artifacts 4 context ${{matrix.context.proj}}.${{matrix.context.build_type}}+${{matrix.context.target_type}}
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{matrix.context.proj}}.${{matrix.context.build_type}}.${{matrix.context.target_type}}.AC6
+        path: ./Alif/AppKit_D3/MLEK_Audio/out/${{matrix.context.proj}}/${{matrix.context.target_type}}/${{matrix.context.build_type}}
+
     - name: AC6-Execution-Test 4 context ${{matrix.context.proj}}.${{matrix.context.build_type}}+${{matrix.context.target_type}}
       working-directory: ./Alif/AppKit_D3/MLEK_Audio
       run: |
