@@ -1,43 +1,42 @@
-It is compliant to the Cortex Microcontroller Software Interface Standard (CMSIS)
-and uses the CMSIS-RTOS2 API interface for RTOS functionality. The CMSIS-RTOS2 API
-is available with various real-time operating systems, for example RTX5 or FreeRTOS.
+# Dual-Core Example for Alif Semiconductor AppKit E7/D3
+
+> TIP: [Webinar 3: ML and Dual-Core Debugging on Alif Ensemble E7](https://www.arm.com/resources/webinar/keil-studio) explains this example.
 
 ## JLink
 
 When using the JLink debug adapter ensure that JLink version 8.44 or higher is installed.
+The JTAG/SWO clock speed is configured to 5MHz, as the default 'auto' setting may have communication issues.
+This is already configured in the `.vscode\launch.json` file.
 
 ## SETOOLS
 
-Before using examples on the board it is required to program the ATOC of the device
+Before using this example on the AppKit E7 board it is required to program the ATOC of the device
 using the Alif SETOOLS.
 
-Refer to the section [Usage](https://www.keil.arm.com/packs/ensemble-alifsemiconductor)
+Refer to the section [Usage](https://github.com/alifsemi/alif_ensemble-cmsis-dfp/blob/main/docs/Overview.md)
 in the overview page of the Alif Semiconductor Ensemble DFP/BSP for information on how
 to setup these tools.
 
 In VS Code use the menu command **Terminal - Run Tasks** and execute:
 
-- "Alif: Install M55_HE or M55_HP debug stubs (single core configuration)"
+- "Alif: Install M55_HE and M55_HP debug stubs (dual core configuration)"
 
 > Note:
 >
-> - For Windows ensure that the Terminal default is `Git Bash` or `PowerShell`.
 > - Configure J15-A & J15-B to position SE (Secure UART) to enable SETOOLS communication with the device.
+> - Configure J15-A & J15-B to position U4 (UART4) to show the output of the Keyword Spotting application.
 
 ## Operation
 
-- At start:
-  - outputs "Blinky example" to STDOUT (UART4, baudrate 115200bps)
-  - blinks vioLED0 in 1 sec interval.
-- The vioBUTTON0 changes the blink frequency and start/stops vioLED1.
+The example combines two [Machine Learning Evaluation Kit (MLEK)](https://www.keil.arm.com/packs/cmsis-mlek-arm) applications:
 
-### CMSIS-Driver Virtual I/O mapping
+- The Audio Keyword Spotting application executes on the Cortex-M55/Ethos-U55 High Efficiency core. The inference result is output over the serial port.
+- The Video Object Detection application executes on the Cortex-M55/Ethos-U55 High Performance core. The inference result is shown on the display.
 
-| CMSIS-Driver VIO  | Physical resource
-|:------------------|:----------------------
-| vioBUTTON0        | Joystick Select Button
-| vioLED0           | RGB LED Red
-| vioLED1           | RGB LED Green
+![Structure of the Example](Example-Structure.png)
 
-> Note:
-> For STDOUT (printf output) configure J15-A & J15-B to position U4 (UART4)
+## Multi-core Debugging
+
+Use [Keil Studio for VSCode](https://www.keil.arm.com/) that supports multi-core debugging as shown below.
+
+![Multi-core Debugging](Multicore-Debugging.png)

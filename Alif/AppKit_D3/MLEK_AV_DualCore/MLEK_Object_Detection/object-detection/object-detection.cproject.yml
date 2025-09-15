@@ -34,7 +34,6 @@ project:
   output:
     type:
       - elf
-      - bin
       - map
       - hex
 
@@ -118,5 +117,5 @@ project:
     - component: ML Eval Kit:Vision:Object detection
 
   layers:
-    - layer: ../board/AppKit-E7_M55_HP/Board_HP.clayer.yml
-      type: Board
+    - layer: $OD-Board-Layer$
+#   - layer: ../board/AppKit-E7_M55_HP/Board_HP.clayer.yml

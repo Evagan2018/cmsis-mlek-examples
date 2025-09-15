@@ -6,7 +6,7 @@
             "type": "gdbtarget",
             "request": "launch",
             "cwd": "${workspaceFolder}/",
-            "program": "out/TFLiteRT_HelloWorld/AE722F80F55D5LS/Debug/TFLiteRT_HelloWorld.axf",
+            "program": "out\\TFLiteRT_HelloWorld\\AE722F80F55D5LS\\Debug\\TFLiteRT_HelloWorld.axf",
             "gdb": "arm-none-eabi-gdb",
             "preLaunchTask": "CMSIS Load",
             "initCommands": [
@@ -14,10 +14,12 @@
                 "tbreak main"
             ],
             "customResetCommands": [
-                "monitor reset"
+                "monitor reset",
+                "tbreak main",
+                "continue"
             ],
             "target": {
-                "server": "JLinkGDBServerCLExe",
+                "server": "JLinkGDBServerCL.exe",
                 "serverParameters": [
                     "-device",
                     "AE722F80F55D5LS_M55_HE",
@@ -37,6 +39,7 @@
                 "port": "3333"
             },
             "cmsis": {
+                "cbuildRunFile": "${command:cmsis-csolution.getCbuildRunFile}",
                 "updateConfiguration": "auto"
             }
         },
@@ -45,18 +48,21 @@
             "type": "gdbtarget",
             "request": "attach",
             "cwd": "${workspaceFolder}/",
-            "program": "out/TFLiteRT_HelloWorld/AE722F80F55D5LS/Debug/TFLiteRT_HelloWorld.axf",
+            "program": "out\\TFLiteRT_HelloWorld\\AE722F80F55D5LS\\Debug\\TFLiteRT_HelloWorld.axf",
             "gdb": "arm-none-eabi-gdb",
             "initCommands": [
                 ""
             ],
             "customResetCommands": [
-                "monitor reset"
+                "monitor reset",
+                "tbreak main",
+                "continue"
             ],
             "target": {
                 "port": "3333"
             },
             "cmsis": {
+                "cbuildRunFile": "${command:cmsis-csolution.getCbuildRunFile}",
                 "updateConfiguration": "auto"
             }
         },
@@ -70,8 +76,13 @@
             "initCommands": [
                 ""
             ],
+            "customResetCommands": [
+                "monitor reset",
+                "tbreak main",
+                "continue"
+            ],
             "target": {
-                "server": "JLinkGDBServerCLExe",
+                "server": "JLinkGDBServerCL.exe",
                 "serverParameters": [
                     "-device",
                     "AE722F80F55D5LS_M55_HP",
@@ -91,6 +102,7 @@
                 "port": "3334"
             },
             "cmsis": {
+                "cbuildRunFile": "${command:cmsis-csolution.getCbuildRunFile}",
                 "updateConfiguration": "auto"
             }
         }

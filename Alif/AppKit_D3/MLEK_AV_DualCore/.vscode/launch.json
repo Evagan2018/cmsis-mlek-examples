@@ -28,7 +28,7 @@
                     "-if",
                     "SWD",
                     "-speed",
-                    "auto",
+                    "5000",
                     "-noir",
                     "-vd",
                     "-nogui",
@@ -40,30 +40,7 @@
             },
             "cmsis": {
                 "cbuildRunFile": "${command:cmsis-csolution.getCbuildRunFile}",
-                "updateConfiguration": "auto"
-            }
-        },
-        {
-            "name": "M55_HP JLink (attach)",
-            "type": "gdbtarget",
-            "request": "attach",
-            "cwd": "${workspaceFolder}/",
-            "program": "out\\object-detection\\AE722F80F55D5LS\\Debug-Live_Stream\\object-detection.axf",
-            "gdb": "arm-none-eabi-gdb",
-            "initCommands": [
-                ""
-            ],
-            "customResetCommands": [
-                "monitor reset",
-                "tbreak main",
-                "continue"
-            ],
-            "target": {
-                "port": "3333"
-            },
-            "cmsis": {
-                "cbuildRunFile": "${command:cmsis-csolution.getCbuildRunFile}",
-                "updateConfiguration": "auto"
+                "updateConfiguration": "no"
             }
         },
         {
@@ -91,7 +68,7 @@
                     "-if",
                     "SWD",
                     "-speed",
-                    "auto",
+                    "5000",
                     "-noir",
                     "-vd",
                     "-nogui",
@@ -100,6 +77,29 @@
                     "3334"
                 ],
                 "port": "3334"
+            },
+            "cmsis": {
+                "cbuildRunFile": "${command:cmsis-csolution.getCbuildRunFile}",
+                "updateConfiguration": "no"
+            }
+        },
+        {
+            "name": "M55_HP JLink (attach)",
+            "type": "gdbtarget",
+            "request": "attach",
+            "cwd": "${workspaceFolder}/",
+            "program": "out\\object-detection\\AE722F80F55D5LS\\Debug-Live_Stream\\object-detection.axf",
+            "gdb": "arm-none-eabi-gdb",
+            "initCommands": [
+                ""
+            ],
+            "customResetCommands": [
+                "monitor reset",
+                "tbreak main",
+                "continue"
+            ],
+            "target": {
+                "port": "3333"
             },
             "cmsis": {
                 "cbuildRunFile": "${command:cmsis-csolution.getCbuildRunFile}",

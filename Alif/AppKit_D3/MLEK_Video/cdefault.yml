@@ -32,11 +32,12 @@ default:
         - -ffunction-sections
         - -fdata-sections
         - -gdwarf-4
+        - -flax-vector-conversions
       CPP:
         - -std=c++17
         - -fno-exceptions
         - -fno-rtti
-        - -ffp-mode=full
+#       - -ffp-mode=full
       C:
         - -std=gnu11
       Link:
@@ -61,7 +62,7 @@ default:
         - -std=gnu11
         - -Wno-nan-infinity-disabled
       Link:
-        - -lcrt0
+        # - -lcrt0
         - -Wl,-Map=$elf()$.map
         - -Wl,--gc-sections
 

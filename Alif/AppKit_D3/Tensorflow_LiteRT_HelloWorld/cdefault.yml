@@ -30,12 +30,13 @@ default:
         - -fomit-frame-pointer
         - -ffunction-sections
         - -fdata-sections
+        - -flax-vector-conversions
         - -gdwarf-4
       CPP:
         - -std=c++17
         - -fno-exceptions
         - -fno-rtti
-        - -ffp-mode=full
+#       - -ffp-mode=full
       C:
         - -std=gnu11
       Link:
@@ -55,11 +56,11 @@ default:
         - -std=c++17
         - -fno-exceptions
         - -fno-rtti
-        - -ffp-mode=full
+#       - -ffp-model=full
       C:
         - -std=gnu11
       Link:
-        - -lcrt0
+        # - -lcrt0
         - -Wl,-Map=$elf()$.map
         - -Wl,--gc-sections
 

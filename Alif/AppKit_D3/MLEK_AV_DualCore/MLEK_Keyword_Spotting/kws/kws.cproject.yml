@@ -34,7 +34,6 @@ project:
   output:
     type:
       - elf
-      - bin
       - hex
       - map
 
@@ -106,5 +105,5 @@ project:
     - component: ML Eval Kit:Voice:Keyword spotting
 
   layers:
-    - layer: ../board/AppKit-E7_M55_HE/Board_HE.clayer.yml
-      type: Board
+    - layer: $KWS-Board-Layer$
+#   - layer: ../board/AppKit-E7_M55_HE/Board_HE.clayer.yml

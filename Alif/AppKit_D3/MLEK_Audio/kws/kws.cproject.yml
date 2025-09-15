@@ -34,8 +34,8 @@ project:
   output:
     type:
       - elf
-      - bin
       - hex
+      - map
 
   connections:
     - connect: Board Layer with Audio interface

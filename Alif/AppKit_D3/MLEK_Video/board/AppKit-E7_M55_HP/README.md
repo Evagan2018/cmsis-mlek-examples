@@ -59,7 +59,7 @@ Before using layers on the board it is required to program the ATOC of the devic
 using the Alif SETOOLS. The required `.vscode\tasks.json` commands are part of the
 Blinky examples. It is therefore recommended to start with such an example.
 
-Refer to the section [Usage](https://www.keil.arm.com/packs/ensemble-alifsemiconductor)
+Refer to the section [Usage](https://github.com/alifsemi/alif_ensemble-cmsis-dfp/blob/main/docs/Overview.md)
 in the overview page of the Alif Semiconductor Ensemble DFP/BSP for information on how
 to setup these tools.
 

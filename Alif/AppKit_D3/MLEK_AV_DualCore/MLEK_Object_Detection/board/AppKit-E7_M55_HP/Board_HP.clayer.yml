@@ -115,3 +115,8 @@ layer:
       files:
         - file: ./ethosu_cb_dcache.c
         - file: ./ethosu_cb_os_rtos2.c
+
+  linker:
+    - for-compiler: GCC
+      script: ./linker_gnu_mram_custom.ld.src
+      regions: ./RTE/Device/AE722F80F55D5LS_M55_HP/app_mem_regions.h
