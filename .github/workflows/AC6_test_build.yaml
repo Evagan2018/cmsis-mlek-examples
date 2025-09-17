@@ -67,7 +67,7 @@ jobs:
     - name: ${{matrix.context.tool}} Run cbuild setup
       working-directory: ${{matrix.context.dir}}
       run: |
-        cbuild setup ${{matrix.context.proj}}.csolution.yml -S
+        cbuild setup ${{matrix.context.proj}}.csolution.yml --context-set --packs
 
     - name: ${{matrix.context.tool}} Build-Test for context ${{matrix.context.proj}}.${{matrix.context.build_type}}+${{matrix.context.target_type}}
       working-directory: ${{matrix.context.dir}}
