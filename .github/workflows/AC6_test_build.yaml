@@ -64,6 +64,11 @@ jobs:
         key: Alif
         path: /home/runner/.cache/arm/packs/.Download
 
+    - name: ${{matrix.context.tool}} Run cbuild setup
+      working-directory: ${{matrix.context.dir}}
+      run: |
+        cbuild setup ${{matrix.context.proj}}.csolution.yml -S
+
     - name: ${{matrix.context.tool}} Build-Test for context ${{matrix.context.proj}}.${{matrix.context.build_type}}+${{matrix.context.target_type}}
       working-directory: ${{matrix.context.dir}}
       run: |
