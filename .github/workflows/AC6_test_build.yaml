@@ -28,7 +28,8 @@ on:
   
 jobs:
   CI:
-    strategy:  
+    strategy:
+      max-parallel: 1    
       matrix:
         context: [
           { tool: AC6,   dir: ./Alif/AppKit_D3/MLEK_Audio,                   proj: mlek_audio,           target_type: AE722F80F55D5LS-U55-128, build_type: Debug-Live_Stream },
@@ -54,15 +55,10 @@ jobs:
       uses: ARM-software/cmsis-actions/vcpkg@v1
       with: 
         config: "./vcpkg-configuration.json"
+        cache: ""
 
     - name: Activate Arm tool license
       uses: ARM-software/cmsis-actions/armlm@v1
-
-    - name: Cache downloaded packs
-      uses: actions/cache@v4
-      with:
-        key: Alif
-        path: /home/runner/.cache/arm/packs/.Download
 
     - name: Run cbuild setup for ${{matrix.context.tool}}_${{matrix.context.proj}}.csolution.yml
       working-directory: ${{matrix.context.dir}}
@@ -73,6 +69,11 @@ jobs:
       working-directory: ${{matrix.context.dir}}
       run: |
         cbuild ${{matrix.context.proj}}.csolution.yml --context .${{matrix.context.build_type}}+${{matrix.context.target_type}} --toolchain ${{matrix.context.tool}} --packs
+        
+    - name: ${{matrix.context.tool}} FlashDownload-Test for context ${{matrix.context.proj}}.${{matrix.context.build_type}}+${{matrix.context.target_type}}
+      working-directory: ${{matrix.context.dir}}/out
+      run: | 
+         python3 -m pyocd load --probe cmsisdap: --cbuild-run ${{matrix.context.proj}}+${{matrix.context.target_type}}.cbuild-run.yml
 
     - name: Upload output for context ${{matrix.context.proj}}.${{matrix.context.build_type}}+${{matrix.context.target_type}}
       uses: actions/upload-artifact@v4
