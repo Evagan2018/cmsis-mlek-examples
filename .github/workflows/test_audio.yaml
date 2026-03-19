@@ -42,7 +42,7 @@ jobs:
     steps:
 
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Activate vcpkg
       uses: ARM-software/cmsis-actions/vcpkg@v1
@@ -53,7 +53,7 @@ jobs:
       uses: ARM-software/cmsis-actions/armlm@v1
 
     - name: Cache downloaded packs
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         key: cmsis-packs-download
         path: /home/runner/.cache/arm/packs/.Download
@@ -64,9 +64,9 @@ jobs:
         cpackget update-index
 
     - name: Install python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
-        python-version: '3.9'
+        python-version: '3.13'
 
     - name: Install opencv-python
       run: |
@@ -77,7 +77,7 @@ jobs:
 
     - name: Cache downloaded packs
       if: always()    
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         key: cmsis-mlek-download
         path: /home/runner/.cache/arm/packs/.Download
@@ -109,7 +109,7 @@ jobs:
         test "$(grep "FAIL: " fvp_stdout_${{matrix.context.build_type}}_${{matrix.context.target_type}}_${{matrix.context.model}}.log | wc -l)" -eq 0
 
     - name: Upload FVP UART output for ${{matrix.context.build_type}}_${{matrix.context.target_type}}_${{matrix.context.model}}.log
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: fvp_stdout_${{matrix.context.build_type}}_${{matrix.context.target_type}}_${{matrix.context.model}}.log
         path: ./Alif/AppKit_D3/MLEK_Audio/fvp_stdout_${{matrix.context.build_type}}_${{matrix.context.target_type}}_${{matrix.context.model}}.log
