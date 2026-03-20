@@ -28,7 +28,8 @@ on:
   
 jobs:
   CI:
-    strategy:  
+    strategy:
+      max-parallel: 1
       matrix:
         context: [
           { tool: AC6,   dir: ./Alif/AppKit_D3/MLEK_Audio,                   proj: mlek_audio,           target_type: AE722F80F55D5LS-U55-128, build_type: Debug-Live_Stream },
