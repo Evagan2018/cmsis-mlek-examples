@@ -72,7 +72,9 @@ jobs:
     - name: ${{matrix.context.tool}} Build-Test for context ${{matrix.context.proj}}.${{matrix.context.build_type}}+${{matrix.context.target_type}}
       working-directory: ${{matrix.context.dir}}
       run: |
-        cbuild ${{matrix.context.proj}}.csolution.yml --context .${{matrix.context.build_type}}+${{matrix.context.target_type}} --toolchain ${{matrix.context.tool}} --packs -r -v
+        cbuild ${{matrix.context.proj}}.csolution.yml --packs -r -v --update-rte \
+        --context .${{matrix.context.build_type}}+${{matrix.context.target_type}} \
+        --toolchain ${{matrix.context.tool}}
 
     - name: Upload output for context ${{matrix.context.proj}}.${{matrix.context.build_type}}+${{matrix.context.target_type}}
       uses: actions/upload-artifact@v7
