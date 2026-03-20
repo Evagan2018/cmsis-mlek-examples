@@ -64,16 +64,16 @@ jobs:
         cpackget init https://www.keil.com/pack/index.pidx
         cpackget update-index
 
-    # - name: Cache downloaded packs
-    #  uses: actions/cache@v5
-    #  with:
-    #    key: Alif
-    #    path: /home/runner/.cache/arm/packs/.Download
+    - name: Cache downloaded packs
+      uses: actions/cache@v5
+      with:
+        key: Alif
+        path: /home/runner/.cache/arm/packs/.Download
 
     - name: ${{matrix.context.tool}} Build-Test for context ${{matrix.context.proj}}.${{matrix.context.build_type}}+${{matrix.context.target_type}}
       working-directory: ${{matrix.context.dir}}
       run: |
-        cbuild ${{matrix.context.proj}}.csolution.yml --packs -r -v -C --update-rte \
+        cbuild ${{matrix.context.proj}}.csolution.yml --packs \
         --context .${{matrix.context.build_type}}+${{matrix.context.target_type}} \
         --toolchain ${{matrix.context.tool}}
 
