@@ -51,6 +51,15 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v6
 
+    - name: Install tree
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y tree
+
+    - name: Show directory tree for ${{matrix.context.dir}}/out
+      working-directory: ${{matrix.context.dir}}/out
+      run: tree
+
     - name: Activate vcpkg
       uses: ARM-software/cmsis-actions/vcpkg@v1
       with: 
@@ -73,7 +82,7 @@ jobs:
     - name: ${{matrix.context.tool}} Build-Test for context ${{matrix.context.proj}}.${{matrix.context.build_type}}+${{matrix.context.target_type}}
       working-directory: ${{matrix.context.dir}}
       run: |
-        cbuild ${{matrix.context.proj}}.csolution.yml --packs --update-rte -r -C \
+        cbuild ${{matrix.context.proj}}.csolution.yml --packs -r -C \
         --context .${{matrix.context.build_type}}+${{matrix.context.target_type}} \
         --toolchain ${{matrix.context.tool}}
 
