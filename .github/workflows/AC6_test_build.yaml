@@ -87,9 +87,9 @@ jobs:
     - name: ${{matrix.context.tool}} Build-Test for context ${{matrix.context.proj}}.${{matrix.context.build_type}}+${{matrix.context.target_type}}
       working-directory: ${{matrix.context.dir}}
       run: |
-        cbuild ${{matrix.context.proj}}.csolution.yml --update-rte --packs --rebuild --verbose\
+        cbuild ${{matrix.context.proj}}.csolution.yml --packs --rebuild \
         --context .${{matrix.context.build_type}}+${{matrix.context.target_type}} \
-        --toolchain ${{matrix.context.tool}}
+        --toolchain ${{matrix.context.tool}} --update-rte --verbose
 
     - name: Show 2 directory tree
       working-directory: ${{matrix.context.dir}}
