@@ -70,7 +70,7 @@ jobs:
         cbuild ${{matrix.context.proj}}.csolution.yml --context .${{matrix.context.build_type}}+${{matrix.context.target_type}} --toolchain ${{matrix.context.tool}} --packs
 
     - name: Upload output for context ${{matrix.context.proj}}.${{matrix.context.build_type}}+${{matrix.context.target_type}}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{matrix.context.tool}}_build_${{matrix.context.proj}}.${{matrix.context.build_type}}+${{matrix.context.target_type}}
         path: ${{matrix.context.dir}}/out
