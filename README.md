@@ -19,7 +19,7 @@ Configured Boards:
 2. In VS Code, either clone this Git repository or (if downloaded as ZIP file) open the top-level folder.
 3. Open the [CMSIS View](https://mdk-packs.github.io/vscode-cmsis-solution-docs/userinterface.html#2-main-area-of-the-cmsis-view) in VS Code and use the ... menu to choose an example via Select Active Solution from workspace.
 4. The related tools and software packs are downloaded and installed. Review progress with View - Output - CMSIS Solution.
-5. In the CMSIS view, use the [Action buttons](https://github.com/ARM-software/vscode-cmsis-csolution?tab=readme-ov-file#action-buttons) to build, load and debug the example.
+5. In the CMSIS view, use the [Action buttons](https://github.com/Open-CMSIS-Pack/vscode-cmsis-solution#action-buttons) to build, load and debug the example.
 
 ## CI Verification
 
