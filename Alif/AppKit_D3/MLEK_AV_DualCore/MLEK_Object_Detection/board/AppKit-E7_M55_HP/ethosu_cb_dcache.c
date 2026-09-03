@@ -37,23 +37,18 @@ const mem_block_t non_cached_memory[] = {
 };
 
 /**
-  \brief Check if the memory region needs to be invalidated.
+  \brief Check whether one memory region requires cache maintenance.
   \param[in] p      Pointer to the memory region start address.
   \param[in] bytes  Size of memory region in bytes.
-  \return           true if an invalidate is required, false otherwise
+  \return           true if cache maintenance is required, false otherwise.
  */
 static bool check_mem_region(const void *p, size_t bytes) {
-  uint32_t n_blocks;
-  uint32_t block;
-  uint32_t mem_start;
-  uint32_t mem_end;
+  uint32_t mem_start = (uint32_t)(uintptr_t)p;
+  uint32_t mem_end   = mem_start + bytes - 1U;
+  uint32_t n_blocks  =
+      sizeof(non_cached_memory) / sizeof(non_cached_memory[0]);
 
-  mem_start = (uint32_t)p;
-  mem_end  = mem_start + bytes - 1;
-
-  n_blocks = sizeof(non_cached_memory) / sizeof(non_cached_memory[0]);
-
-  for (block = 0; block < n_blocks; block++) {
+  for (uint32_t block = 0U; block < n_blocks; block++) {
     /* Is current block within non-cacheable memory region */
     if (mem_start >= non_cached_memory[block].start_addr && mem_end <= non_cached_memory[block].end_addr) {
       /* No need for cache management */
@@ -64,9 +59,41 @@ static bool check_mem_region(const void *p, size_t bytes) {
   return true;
 }
 
-void ethosu_flush_dcache(uint32_t *p, size_t bytes) {
+/**
+  \brief Check whether any memory region requires cache maintenance.
+  \param[in] base_addr       Array containing the memory region base addresses.
+  \param[in] base_addr_size  Array containing the size of each region in bytes.
+  \param[in] num_base_addr   Number of entries in the address and size arrays.
+  \return                    true if cache maintenance is required, false otherwise.
+ */
+static bool check_mem_regions(const uint64_t *base_addr,
+                              const size_t *base_addr_size,
+                              int num_base_addr) {
+  if ((base_addr == NULL) || (base_addr_size == NULL)) {
+    return true;
+  }
 
-  if (check_mem_region(p, bytes)) {
+  for (int index = 0; index < num_base_addr; index++) {
+    const void *p = (const void *)(uintptr_t)base_addr[index];
+
+    if (check_mem_region(p, base_addr_size[index])) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+  \brief Clean the data cache for the supplied memory regions.
+  \param[in] base_addr       Array containing the memory region base addresses.
+  \param[in] base_addr_size  Array containing the size of each region in bytes.
+  \param[in] num_base_addr   Number of entries in the address and size arrays.
+ */
+void ethosu_flush_dcache(const uint64_t *base_addr,
+                         const size_t *base_addr_size,
+                         int num_base_addr) {
+  if (check_mem_regions(base_addr, base_addr_size, num_base_addr)) {
     /* Call CleanDCache instead of CleanDCache_by_Addr to avoid delays.        */
     /* Memory regions size is usually large and calling by_Addr consumes time. */
     SCB_CleanDCache();
@@ -76,16 +103,16 @@ void ethosu_flush_dcache(uint32_t *p, size_t bytes) {
   }
 }
 
-void ethosu_invalidate_dcache(uint32_t *p, size_t bytes) {
-  bool invalidate;
-
-  if (p == NULL) {
-    invalidate = true;
-  } else {
-    invalidate = check_mem_region(p, bytes);
-  }
-
-  if (invalidate) {
+/**
+  \brief Invalidate the data cache for the supplied memory regions.
+  \param[in] base_addr       Array containing the memory region base addresses.
+  \param[in] base_addr_size  Array containing the size of each region in bytes.
+  \param[in] num_base_addr   Number of entries in the address and size arrays.
+ */
+void ethosu_invalidate_dcache(const uint64_t *base_addr,
+                              const size_t *base_addr_size,
+                              int num_base_addr) {
+  if (check_mem_regions(base_addr, base_addr_size, num_base_addr)) {
     /* Clean and invalidate data cache */
     SCB_CleanInvalidateDCache();
   }
