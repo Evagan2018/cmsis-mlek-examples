@@ -53,6 +53,7 @@ default:
         - -ffunction-sections
         - -fdata-sections
         - -gdwarf-4
+        - -Wno-macro-redefined
       CPP:
         - -std=c++17
         - -fno-exceptions
@@ -61,6 +62,10 @@ default:
       C:
         - -std=gnu11
         - -Wno-nan-infinity-disabled
+        - -Wno-unknown-attributes
+        # Work around an Arm LLVM 22.1.0 backend crash when loop-vectorizing
+        # CMSIS-DSP float16 code for Cortex-M55 without MVE floating point.
+        - -fno-vectorize
       Link:
         - -nostartfiles
         - -lcrt0
