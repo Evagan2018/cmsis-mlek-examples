@@ -33,7 +33,7 @@ solution:
     - pack: ARM::V2M_MPS3_SSE_310_BSP@^1.4.0
     - pack: ARM::SSE_315_BSP@^1.0.0
     - pack: ARM::SSE_320_BSP@^1.1.0
-    - pack: AlifSemiconductor::Ensemble
+    - pack: AlifSemiconductor::Ensemble@^2.2.1-0
     - pack: ARM::CMSIS
 
   build-types:

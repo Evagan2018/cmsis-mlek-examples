@@ -28,7 +28,7 @@
 #define RTE_CMSIS_RTOS2                 /* CMSIS-RTOS2 */
 #define RTE_CMSIS_RTOS2_RTX5            /* CMSIS-RTOS2 Keil RTX5 */
 #define RTE_CMSIS_RTOS2_RTX5_SOURCE     /* CMSIS-RTOS2 Keil RTX5 Source */
-/* ARM::Machine Learning:NPU Support:Ethos-U Driver&Generic U55@1.26.2 */
+/* ARM::Machine Learning:NPU Support:Ethos-U Driver&Generic U55@1.26.5 */
 #define RTE_ETHOS_U_CORE_DRIVER
 /* AlifSemiconductor::BSP:External peripherals:CAMERA Sensor MT9M114@2.2.0 */
 #define RTE_Drivers_CAMERA_SENSOR_MT9M114            /* Driver CAMERA Sensor */
@@ -70,17 +70,17 @@
 #define RTE_Drivers_MIPI_DSI               /* Driver MIPI DSI */
 /* AlifSemiconductor::Device:SOC Peripherals:PINCONF@2.2.0 */
 #define RTE_Drivers_LL_PINCONF              /* Driver PinPAD and PinMux */
-/* tensorflow::Data Exchange:Serialization:flatbuffers&tensorflow@1.26.2 */
+/* tensorflow::Data Exchange:Serialization:flatbuffers&tensorflow@1.26.5 */
 #define RTE_DataExchange_Serialization_flatbuffers     /* flatbuffers */
-/* tensorflow::Data Processing:Math:gemmlowp fixed-point&tensorflow@1.26.2 */
+/* tensorflow::Data Processing:Math:gemmlowp fixed-point&tensorflow@1.26.5 */
 #define RTE_DataExchange_Math_gemmlowp     /* gemmlowp */
-/* tensorflow::Data Processing:Math:kissfft&tensorflow@1.26.2 */
+/* tensorflow::Data Processing:Math:kissfft&tensorflow@1.26.5 */
 #define RTE_DataExchange_Math_kissfft     /* kissfft */
-/* tensorflow::Data Processing:Math:ruy&tensorflow@1.26.2 */
+/* tensorflow::Data Processing:Math:ruy&tensorflow@1.26.5 */
 #define RTE_DataProcessing_Math_ruy     /* ruy */
-/* tensorflow::Machine Learning:TensorFlow:Kernel&Ethos-U@1.26.2 */
+/* tensorflow::Machine Learning:TensorFlow:Kernel&Ethos-U@1.26.5 */
 #define RTE_ML_TF_LITE     /* TF */
-/* tensorflow::Machine Learning:TensorFlow:Testing@1.26.2 */
+/* tensorflow::Machine Learning:TensorFlow:Testing@1.26.5 */
 #define RTE_ML_TF_LITE     /* TF */
 
 

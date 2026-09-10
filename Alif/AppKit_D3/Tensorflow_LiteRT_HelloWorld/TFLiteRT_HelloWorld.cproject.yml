@@ -3,7 +3,7 @@ project:
 
   packs:
     - pack: ARM::CMSIS@6.3.0
-    - pack: ARM::CMSIS-DSP@1.17.1
+    - pack: ARM::CMSIS-DSP@1.18.0
     - pack: ARM::CMSIS-NN@7.0.0
     - pack: ARM::CMSIS-Compiler@^2.3.0
 

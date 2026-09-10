@@ -15,10 +15,10 @@
 /* ARM::Machine Learning:MLEK:Math@2.0.0 */
 #define MLEK_LOG_ENABLE
 #define MLEK_LOG_LEVEL MLEK_LOG_LEVEL_INFO
-/* ARM::Machine Learning:NPU Support:Ethos-U Driver&Generic U55@1.26.2 */
+/* ARM::Machine Learning:NPU Support:Ethos-U Driver&Generic U55@1.26.5 */
 // enabling global pre includes
         #define ETHOSU_ARCH u55
-/* tensorflow::Machine Learning:TensorFlow:Kernel&Ethos-U@1.26.2 */
+/* tensorflow::Machine Learning:TensorFlow:Kernel&Ethos-U@1.26.5 */
 // enabling global pre includes
         #define TF_LITE_STATIC_MEMORY 1
         #define TF_LITE_DISABLE_X86_NEON 1
