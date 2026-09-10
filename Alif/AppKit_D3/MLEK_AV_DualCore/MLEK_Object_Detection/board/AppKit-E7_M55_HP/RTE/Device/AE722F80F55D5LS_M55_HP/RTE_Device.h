@@ -437,7 +437,7 @@
 //     <90=> 90 FPS
 // <i> Defines camera ARX3A0 frame per second
 // <i> Default: 90 FPS
-#define RTE_ARX3A0_CAMERA_SENSOR_CSI_CFG_FPS                 60
+#define RTE_ARX3A0_CAMERA_SENSOR_CSI_CFG_FPS             60
 
 // <o> Select camera ARX3A0 frequency
 // <i> Defines camera ARX3A0 frequency
@@ -724,7 +724,7 @@
 //     <4=>   320x240_RGB565
 //     <5=>   320x320_RGB565
 // <i> Default: 0
-#define RTE_MT9M114_CAMERA_SENSOR_MIPI_IMAGE_CONFIG                1
+#define RTE_MT9M114_CAMERA_SENSOR_MIPI_IMAGE_CONFIG            1
 
 // <o> select MT9M114 MIPI number of lanes in DPHY
 // <i> defines select MT9M114 MIPI number of lanes in DPHY.
@@ -1089,7 +1089,7 @@
 //     <5=> 24bit
 // <i> Defines Color mode for display panel
 // <i> Default: 24bit
-#define RTE_ILI9806E_PANEL_DSI_COLOR_MODE            5
+#define RTE_ILI9806E_PANEL_DSI_COLOR_MODE   5
 
 // <o> Number of data lanes
 //     <1=> ONE
@@ -1346,7 +1346,7 @@
 //      <7=> ARGB4444
 // <i> Defines CDC200 pixel format
 // <i> Default: RGB888
-#define RTE_CDC200_PIXEL_FORMAT              1
+#define RTE_CDC200_PIXEL_FORMAT   1
 
 // <o> CDC200 Constant alpha <0-255>
 // <i> Defines CDC200 constant alpha range from 0 (fully transparent) to 255 or 1.0 (fully opaque).
@@ -3257,7 +3257,7 @@
 //    <1=> ENABLE
 // <i> Defines Blocking mode support for UART4
 // <i> Default: DISABLE
-#define RTE_UART4_BLOCKING_MODE_ENABLE       1
+#define RTE_UART4_BLOCKING_MODE_ENABLE 1
 
 #endif  // UART4
 

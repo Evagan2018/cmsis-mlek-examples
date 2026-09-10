@@ -23,6 +23,7 @@
 #include "board_defs.h"
 
 #include "Driver_IO.h"
+#include "board_defs.h"
 
   /* MT9M114 Camera reset GPIO port */
 extern ARM_DRIVER_GPIO ARM_Driver_GPIO_(BOARD_CAMERA_RESET_GPIO_PORT);

@@ -120,3 +120,6 @@ layer:
     - for-compiler: GCC
       script: ./linker_gnu_mram_custom.ld.src
       regions: ./RTE/Device/AE722F80F55D5LS_M55_HE/app_mem_regions.h
+    - for-compiler: CLANG
+      script: ./linker_gnu_mram_custom.ld.src
+      regions: ./RTE/Device/AE722F80F55D5LS_M55_HE/app_mem_regions.h
