@@ -99,20 +99,11 @@ void ethosu_invalidate_dcache(const uint64_t *base_addr,
     const void *p = (const void *)(uintptr_t)base_addr[region];
     invalidate = check_mem_region(p, base_addr_size[region]);
   }
-}
 
-/**
-  \brief Invalidate the data cache for the supplied memory regions.
-  \param[in] base_addr       Array containing the memory region base addresses.
-  \param[in] base_addr_size  Array containing the size of each region in bytes.
-  \param[in] num_base_addr   Number of entries in the address and size arrays.
- */
-void ethosu_invalidate_dcache(const uint64_t *base_addr,
-                              const size_t *base_addr_size,
-                              int num_base_addr) {
-  if (check_mem_regions(base_addr, base_addr_size, num_base_addr)) {
+  if (invalidate) {
     SCB_CleanInvalidateDCache();
-  } else {
+  }
+  else {
     __DSB();
   }
 }
