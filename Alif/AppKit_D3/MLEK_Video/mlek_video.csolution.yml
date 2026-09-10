@@ -19,7 +19,7 @@ solution:
   cdefault:
 
   output-dirs:
-    tmpdir: ../../../../../../../../../../Tmp/MLEK_Video
+    tmpdir: ../../../../../../../../../../tmp/MLEK_Video
 
   misc:
     - for-compiler: AC6

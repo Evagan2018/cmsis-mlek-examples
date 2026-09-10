@@ -19,7 +19,7 @@ solution:
   cdefault:
 
   output-dirs:
-    tmpdir: ../../../../../../../../../../Tmp/MLEK_AV_DualCore
+    tmpdir: ../../../../../../../../../../tmp/MLEK_AV_DualCore
 
   misc:
     - for-compiler: AC6 # GDB requires DWARF 5, remove when using uVision Debugger
