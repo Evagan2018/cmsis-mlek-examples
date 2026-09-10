@@ -58,23 +58,9 @@ static bool check_mem_region(const void *p, size_t bytes) {
   return true;
 }
 
-/**
-  \brief Flush data cache for the supplied memory regions.
-  \param[in] base_addr       Array of memory region base addresses.
-  \param[in] base_addr_size  Array of memory region sizes in bytes.
-  \param[in] num_base_addr   Number of entries in both arrays.
- */
-void ethosu_flush_dcache(const uint64_t *base_addr,
-                         const size_t *base_addr_size,
-                         int num_base_addr) {
-  bool flush = (base_addr == NULL) || (base_addr_size == NULL);
+void ethosu_flush_dcache(uint32_t *p, size_t bytes) {
 
-  for (int region = 0; !flush && (region < num_base_addr); region++) {
-    const void *p = (const void *)(uintptr_t)base_addr[region];
-    flush = check_mem_region(p, base_addr_size[region]);
-  }
-
-  if (flush) {
+  if (check_mem_region(p, bytes)) {
     /* Call CleanDCache instead of CleanDCache_by_Addr to avoid delays.        */
     /* Memory regions size is usually large and calling by_Addr consumes time. */
     SCB_CleanDCache();
@@ -84,20 +70,13 @@ void ethosu_flush_dcache(const uint64_t *base_addr,
   }
 }
 
-/**
-  \brief Invalidate data cache for the supplied memory regions.
-  \param[in] base_addr       Array of memory region base addresses.
-  \param[in] base_addr_size  Array of memory region sizes in bytes.
-  \param[in] num_base_addr   Number of entries in both arrays.
- */
-void ethosu_invalidate_dcache(const uint64_t *base_addr,
-                              const size_t *base_addr_size,
-                              int num_base_addr) {
-  bool invalidate = (base_addr == NULL) || (base_addr_size == NULL);
+void ethosu_invalidate_dcache(uint32_t *p, size_t bytes) {
+  bool invalidate;
 
-  for (int region = 0; !invalidate && (region < num_base_addr); region++) {
-    const void *p = (const void *)(uintptr_t)base_addr[region];
-    invalidate = check_mem_region(p, base_addr_size[region]);
+  if (p == NULL) {
+    invalidate = true;
+  } else {
+    invalidate = check_mem_region(p, bytes);
   }
 }
 
