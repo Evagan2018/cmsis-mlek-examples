@@ -140,6 +140,7 @@ SECTIONS
 #if __HAS_BULK_SRAM
     LONG (ADDR(.bss.at_sram0))
     LONG (SIZEOF(.bss.at_sram0)/4)
+#endif
     LONG (ADDR(.tbss))
     LONG (SIZEOF(.tbss)/4)
     __zero_table_end__ = .;
