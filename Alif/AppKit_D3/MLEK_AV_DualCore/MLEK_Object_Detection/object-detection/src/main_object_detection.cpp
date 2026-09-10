@@ -25,12 +25,12 @@
  * some heap for the API runtime.
  */
 #include "BufAttributes.hpp" /* Buffer attributes to be applied */
-#include "Classifier.hpp"    /* Classifier for the result */
-#include "DetectionResult.hpp"
-#include "DetectorPostProcessing.hpp" /* Post Process */
-#include "DetectorPreProcessing.hpp"  /* Pre Process */
+#include "mlek/common/Classifier.hpp"    /* Classifier for the result */
+#include "mlek/use_case/object_detection/DetectionResult.hpp"
+#include "mlek/use_case/object_detection/DetectorPostProcessing.hpp" /* Post Process */
+#include "mlek/use_case/object_detection/DetectorPreProcessing.hpp"  /* Pre Process */
 #include "VideoSource.hpp"
-#include "YoloFastestModel.hpp"       /* Model API */
+#include "mlek/fwk/tflm/YoloFastestModel.hpp"       /* Model API */
 
 #include "cmsis_os2.h"                /* ::CMSIS:RTOS2 */
 
@@ -54,33 +54,32 @@ namespace app {
 void app_main_thread(void *arg)
 {
     /* Model object creation and initialisation. */
-    arm::app::YoloFastestModel model;
-    if (!model.Init(arm::app::tensorArena,
-                    sizeof(arm::app::tensorArena),
-                    arm::app::object_detection::GetModelPointer(),
-                    arm::app::object_detection::GetModelLen())) {
+    using ObjectDetectionModel = arm::app::fwk::tflm::YoloFastestModel;
+    ObjectDetectionModel model;
+    arm::app::fwk::iface::MemoryRegion computeBuffer{
+        arm::app::tensorArena, sizeof(arm::app::tensorArena)};
+    arm::app::fwk::iface::MemoryRegion modelBuffer{
+        arm::app::object_detection::GetModelPointer(),
+        arm::app::object_detection::GetModelLen()};
+    if (!model.Init(computeBuffer, modelBuffer)) {
         printf_err("Failed to initialise model\n");
         return;
     }
 
     auto initialImgIdx = 0;
 
-    TfLiteTensor* inputTensor   = model.GetInputTensor(0);
-    TfLiteTensor* outputTensor0 = model.GetOutputTensor(0);
-    TfLiteTensor* outputTensor1 = model.GetOutputTensor(1);
+    auto inputTensor   = model.GetInputTensor(0);
+    auto outputTensor0 = model.GetOutputTensor(0);
+    auto outputTensor1 = model.GetOutputTensor(1);
 
-    if (!inputTensor->dims) {
-        printf_err("Invalid input tensor dims\n");
-        return;
-    } else if (inputTensor->dims->size < 3) {
+    const auto inputShape = model.GetInputShape(0);
+    if (inputShape.size() < 3) {
         printf_err("Input tensor dimension should be >= 3\n");
         return;
     }
 
-    TfLiteIntArray* inputShape = model.GetInputShape(0);
-
-    const int inputImgCols = inputShape->data[arm::app::YoloFastestModel::ms_inputColsIdx];
-    const int inputImgRows = inputShape->data[arm::app::YoloFastestModel::ms_inputRowsIdx];
+    const int inputImgCols = inputShape[ObjectDetectionModel::ms_inputColsIdx];
+    const int inputImgRows = inputShape[ObjectDetectionModel::ms_inputRowsIdx];
 
     /* Set up pre and post-processing. */
     arm::app::DetectorPreProcess preProcess =
@@ -95,8 +94,6 @@ void app_main_thread(void *arg)
         arm::app::object_detection::anchor2};
     arm::app::DetectorPostProcess postProcess =
         arm::app::DetectorPostProcess(outputTensor0, outputTensor1, results, postProcessParams);
-
-    auto dstPtr = static_cast<uint8_t*>(inputTensor->data.uint8);
 
     uint32_t img_idx = 0;
     size_t img_sz;

@@ -61,6 +61,7 @@ default:
       C:
         - -std=gnu11
         - -Wno-nan-infinity-disabled
+        - -Wno-unknown-attributes
       Link:
         - -nostartfiles
         - -lcrt0

@@ -25,18 +25,19 @@
  * some heap for the API runtime.
  */
 #include <cstdint>
+#include <deque>
 #include <string>
 #include <vector>
 
-#include "AudioUtils.hpp"
+#include "mlek/common/AudioSlidingWindow.hpp"
 #include "AudioSource.hpp"      /* Interface to audio data array */
 
 #include "BufAttributes.hpp"    /* Buffer attributes to be applied */
-#include "Classifier.hpp"       /* Classifier for the result */
-#include "KwsProcessing.hpp"    /* Pre and Post Process */
-#include "KwsResult.hpp"        /* KWS results class */
+#include "mlek/common/Classifier.hpp"              /* Classifier for the result */
+#include "mlek/use_case/kws/KwsProcessing.hpp"     /* Pre and Post Process */
+#include "mlek/use_case/kws/KwsResult.hpp"         /* KWS results class */
 #include "Labels.hpp"           /* Label Data for the model */
-#include "MicroNetKwsModel.hpp" /* Model API */
+#include "mlek/fwk/tflm/MicroNetKwsModel.hpp"      /* Model API */
 
 #include "cmsis_os2.h"          /* CMSIS-RTOS2 API */
 
@@ -60,39 +61,39 @@ namespace app {
 void app_main_thread(void *arg)
 {
     /* Model object creation and initialisation. */
-    arm::app::MicroNetKwsModel model;
-    if (!model.Init(arm::app::tensorArena,
-                    sizeof(arm::app::tensorArena),
-                    arm::app::kws::GetModelPointer(),
-                    arm::app::kws::GetModelLen())) {
+    using KwsModel = arm::app::fwk::tflm::MicroNetKwsModel;
+    KwsModel model;
+    arm::app::fwk::iface::MemoryRegion computeBuffer{
+        arm::app::tensorArena, sizeof(arm::app::tensorArena)};
+    arm::app::fwk::iface::MemoryRegion modelBuffer{
+        arm::app::kws::GetModelPointer(), arm::app::kws::GetModelLen()};
+    if (!model.Init(computeBuffer, modelBuffer)) {
         printf_err("Failed to initialise model\n");
         return;
     }
 
     constexpr int minTensorDims = static_cast<int>(
-        (arm::app::MicroNetKwsModel::ms_inputRowsIdx > arm::app::MicroNetKwsModel::ms_inputColsIdx)
-            ? arm::app::MicroNetKwsModel::ms_inputRowsIdx
-            : arm::app::MicroNetKwsModel::ms_inputColsIdx);
+        (KwsModel::ms_inputRowsIdx > KwsModel::ms_inputColsIdx)
+            ? KwsModel::ms_inputRowsIdx
+            : KwsModel::ms_inputColsIdx);
 
     const auto mfccFrameLength = 640;
     const auto mfccFrameStride = 320;
     const auto scoreThreshold  = 0.7;
 
     /* Get Input and Output tensors for pre/post processing. */
-    TfLiteTensor* inputTensor  = model.GetInputTensor(0);
-    TfLiteTensor* outputTensor = model.GetOutputTensor(0);
-    if (!inputTensor->dims) {
-        printf_err("Invalid input tensor dims\n");
-        return;
-    } else if (inputTensor->dims->size < minTensorDims) {
+    auto inputTensor  = model.GetInputTensor(0);
+    auto outputTensor = model.GetOutputTensor(0);
+
+    /* Get input shape for feature extraction. */
+    const auto inputShape = model.GetInputShape(0);
+    if (inputShape.size() < minTensorDims) {
         printf_err("Input tensor dimension should be >= %d\n", minTensorDims);
         return;
     }
 
-    /* Get input shape for feature extraction. */
-    TfLiteIntArray* inputShape     = model.GetInputShape(0);
-    const uint32_t numMfccFeatures = inputShape->data[arm::app::MicroNetKwsModel::ms_inputColsIdx];
-    const uint32_t numMfccFrames   = inputShape->data[arm::app::MicroNetKwsModel::ms_inputRowsIdx];
+    const uint32_t numMfccFeatures = inputShape[KwsModel::ms_inputColsIdx];
+    const uint32_t numMfccFrames   = inputShape[KwsModel::ms_inputRowsIdx];
 
     /* We expect to be sampling 1 second worth of data at a time.
      * NOTE: This is only used for time stamp calculation. */
@@ -105,7 +106,7 @@ void app_main_thread(void *arg)
     std::vector<std::string> labels;
 
     /* Declare a container to hold results from across the whole audio clip. */
-    std::vector<arm::app::kws::KwsResult> finalResults;
+    std::deque<arm::app::kws::KwsResult> finalResults;
 
     /* Object to hold classification results */
     std::vector<arm::app::ClassificationResult> singleInfResult;
@@ -160,11 +161,11 @@ void app_main_thread(void *arg)
             }
 
             /* Add results from this window to our final results vector. */
-            finalResults.emplace_back(arm::app::kws::KwsResult(
+            finalResults.emplace_back(
                 singleInfResult,
                 audioDataSlider.Index() * secondsPerSample * preProcess.m_audioDataStride,
                 audioDataSlider.Index(),
-                scoreThreshold));
+                scoreThreshold);
         }
 
         for (const auto& result : finalResults) {

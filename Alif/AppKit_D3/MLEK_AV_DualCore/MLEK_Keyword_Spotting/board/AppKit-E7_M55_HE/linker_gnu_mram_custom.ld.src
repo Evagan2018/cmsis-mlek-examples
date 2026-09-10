@@ -34,6 +34,12 @@
 #define __ROM_BASE               APP_MRAM_HE_BASE
 #define __ROM_SIZE               APP_MRAM_HE_SIZE
 
+#if defined(__clang__)
+#define READONLY_SECTION
+#else
+#define READONLY_SECTION         (READONLY)
+#endif
+
 /*
  * Note:
  * The empty regions(eg SRAM1) are ON by default, but may have been released
@@ -92,8 +98,8 @@ SECTIONS
   } > MRAM
   __exidx_end = .;
 
-  /* --- Ensure Labels.cpp pointers & strings are in LOADED regions --- */
-  .labels_ro : ALIGN(8)
+  /* --- Ensure Labels.cpp pointers are in LOADED regions --- */
+  .labels_ro READONLY_SECTION : ALIGN(8)
   {
     KEEP(*[Ll]abels*.*(.rodata* .labels* labels*))
   } > MRAM
@@ -103,7 +109,7 @@ SECTIONS
     KEEP(*[Ll]abels*.*(.data*))
   } > SRAM0 AT > MRAM
 
-  .copy.table : ALIGN(4)
+  .copy.table READONLY_SECTION : ALIGN(4)
   {
     __copy_table_start__ = .;
     LONG ( LOADADDR(.data.at_dtcm) )
@@ -112,17 +118,22 @@ SECTIONS
     LONG ( LOADADDR(.code.at_itcm) )
     LONG ( ADDR(.code.at_itcm) )
     LONG ( SIZEOF(.code.at_itcm)/4 )
+    LONG ( LOADADDR(.tdata) )
+    LONG ( ADDR(.tdata) )
+    LONG ( SIZEOF(.tdata)/4 )
     __copy_table_end__ = .;
     . = ALIGN(16);
   } > MRAM
 
-  .zero.table : ALIGN(4)
+  .zero.table READONLY_SECTION : ALIGN(4)
   {
     __zero_table_start__ = .;
     LONG (ADDR(.bss))
     LONG (SIZEOF(.bss)/4)
     LONG (ADDR(.bss.at_sram0))
     LONG (SIZEOF(.bss.at_sram0)/4)
+    LONG (ADDR(.tbss))
+    LONG (SIZEOF(.tbss)/4)
     __zero_table_end__ = .;
     . = ALIGN(16);
   } > MRAM
@@ -135,6 +146,7 @@ SECTIONS
 
   .data.at_dtcm : ALIGN(8)
   {
+    __data_start = .;
     *(vtable)
     *(.data)
     *(.data*)
@@ -150,7 +162,37 @@ SECTIONS
     *(.ARM.exidx* .gnu.linkonce.armexidx.*)
     __exidx_end = .;
     . = ALIGN(16);
+    __data_end = .;
   } > DTCM AT > MRAM
+  __data_source = LOADADDR(.data.at_dtcm);
+  __data_size = __data_end - __data_start;
+
+  .tdata ORIGIN(SRAM0) : ALIGN(8)
+  {
+    *(.tdata .tdata.* .gnu.linkonce.td.*)
+    . = ALIGN(4);
+    __tdata_end = .;
+  } > SRAM0 AT > MRAM
+  __tls_base = ADDR(.tdata);
+  __tdata_start = ADDR(.tdata);
+  __tdata_source = LOADADDR(.tdata);
+  __tdata_source_end = LOADADDR(.tdata) + SIZEOF(.tdata);
+  __data_source_end = __data_source + __data_size;
+
+  .tbss (NOLOAD) : ALIGN(8)
+  {
+    *(.tbss .tbss.* .gnu.linkonce.tb.*)
+    *(.tcommon)
+    . = ALIGN(4);
+    __tls_end = .;
+    __tbss_end = .;
+  } > SRAM0
+  __tbss_start = ADDR(.tbss);
+  __tbss_offset = ADDR(.tbss) - ADDR(.tdata);
+  __tbss_size = SIZEOF(.tbss);
+  __tls_size = __tls_end - __tls_base;
+  __tls_align = MAX(ALIGNOF(.tdata), ALIGNOF(.tbss));
+  __arm32_tls_tcb_offset = MAX(8, __tls_align);
 
   .bss.at_sram0 (NOLOAD) : ALIGN(8)
   {
@@ -168,8 +210,11 @@ SECTIONS
     *(COMMON)
 
     . = ALIGN(8);
+    __bss_end = .;
     __bss_end__ = .;
   } > SRAM0
+  __bss_start = ADDR(.tbss);
+  __bss_size = __bss_end - __bss_start;
 
   .nonsecure0_region (NOLOAD) :
   {
@@ -194,8 +239,10 @@ SECTIONS
   {
     __end__ = .;
     PROVIDE(end = .);
+    __heap_start = .;
     . = . + __HEAP_SIZE;
     . = ALIGN(8);
+    __heap_end = .;
     __HeapLimit = .;
   } > SRAM0
 
@@ -207,8 +254,9 @@ SECTIONS
     __StackTop = .;
   } > SRAM0
   PROVIDE(__stack = __StackTop);
+  PROVIDE(__stack_limit = __StackLimit);
 
-  .readonly.at_mram : ALIGN(8)
+  .readonly.at_mram READONLY_SECTION : ALIGN(8)
   {
     /* Use wildcards to mop up any read-only not directed to TCM */
     KEEP(*(.init))

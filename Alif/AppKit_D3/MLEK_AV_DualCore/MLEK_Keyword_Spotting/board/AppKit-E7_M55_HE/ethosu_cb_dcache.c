@@ -64,9 +64,27 @@ static bool check_mem_region(const void *p, size_t bytes) {
   return true;
 }
 
-void ethosu_flush_dcache(uint32_t *p, size_t bytes) {
+/**
+  \brief Flush the data cache for the supplied memory regions.
+  \param[in] base_addr       Array of memory region base addresses.
+  \param[in] base_addr_size  Array of memory region sizes in bytes.
+  \param[in] num_base_addr   Number of entries in both arrays.
+ */
+void ethosu_flush_dcache(const uint64_t *base_addr, const size_t *base_addr_size, int num_base_addr) {
+  bool flush = false;
 
-  if (check_mem_region(p, bytes)) {
+  if ((base_addr == NULL) || (base_addr_size == NULL)) {
+    flush = true;
+  } else {
+    for (int idx = 0; idx < num_base_addr; idx++) {
+      if (check_mem_region((const void *)(uintptr_t)base_addr[idx], base_addr_size[idx])) {
+        flush = true;
+        break;
+      }
+    }
+  }
+
+  if (flush) {
     /* Call CleanDCache instead of CleanDCache_by_Addr to avoid delays.        */
     /* Memory regions size is usually large and calling by_Addr consumes time. */
     SCB_CleanDCache();
@@ -76,13 +94,25 @@ void ethosu_flush_dcache(uint32_t *p, size_t bytes) {
   }
 }
 
-void ethosu_invalidate_dcache(uint32_t *p, size_t bytes) {
+/**
+  \brief Invalidate the data cache for the supplied memory regions.
+  \param[in] base_addr       Array of memory region base addresses.
+  \param[in] base_addr_size  Array of memory region sizes in bytes.
+  \param[in] num_base_addr   Number of entries in both arrays.
+ */
+void ethosu_invalidate_dcache(const uint64_t *base_addr, const size_t *base_addr_size, int num_base_addr) {
   bool invalidate;
 
-  if (p == NULL) {
+  if ((base_addr == NULL) || (base_addr_size == NULL)) {
     invalidate = true;
   } else {
-    invalidate = check_mem_region(p, bytes);
+    invalidate = false;
+    for (int idx = 0; idx < num_base_addr; idx++) {
+      if (check_mem_region((const void *)(uintptr_t)base_addr[idx], base_addr_size[idx])) {
+        invalidate = true;
+        break;
+      }
+    }
   }
 
   if (invalidate) {

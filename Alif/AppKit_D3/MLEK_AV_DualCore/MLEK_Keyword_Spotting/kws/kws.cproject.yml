@@ -16,20 +16,20 @@
 
 project:
   packs:
-    - pack: ARM::CMSIS@^6.2.0
-    - pack: ARM::CMSIS-DSP@^1.16.0
+    - pack: ARM::CMSIS@^6.3.0
+    - pack: ARM::CMSIS-DSP@1.17.1
     - pack: ARM::CMSIS-NN@^7.0.0
     - pack: ARM::CMSIS-RTX@^5.9.0
 
-    - pack: ARM::ethos-u-core-driver@^1.25.2
+    - pack: ARM::ethos-u-core-driver@^1.26.2
 
-    - pack: ARM::ml-embedded-eval-kit-uc-api@^24.8.0
+    - pack: ARM::ml-embedded-eval-kit-uc-api@^26.6.0
 
-    - pack: tensorflow::flatbuffers@^1.25.2
-    - pack: tensorflow::gemmlowp@^1.25.2
-    - pack: tensorflow::kissfft@^1.25.2
-    - pack: tensorflow::ruy@^1.25.2
-    - pack: tensorflow::tensorflow-lite-micro@^1.25.2
+    - pack: tensorflow::flatbuffers@^1.26.2
+    - pack: tensorflow::gemmlowp@^1.26.2
+    - pack: tensorflow::kissfft@^1.26.2
+    - pack: tensorflow::ruy@^1.26.2
+    - pack: tensorflow::tensorflow-lite-micro@^1.26.2
 
   output:
     type:
@@ -80,7 +80,15 @@ project:
 
   components:
     - component: CMSIS:DSP&Source
+      misc:
+        - for-compiler: GCC
+          C:
+            - -fno-tree-ter
     - component: CMSIS:NN Lib
+      misc:
+        - for-compiler: CLANG
+          C:
+            - -Wno-unknown-attributes
     - component: CMSIS:OS Tick:SysTick
     - component: CMSIS:RTOS2:Keil RTX5&Source
 
@@ -99,10 +107,12 @@ project:
     - component: Machine Learning:TensorFlow:Kernel Utils
     - component: Machine Learning:TensorFlow:Testing
 
-    - component: ML Eval Kit:Common:API
-    - component: ML Eval Kit:Common:Log
-    - component: ML Eval Kit:Common:Math
-    - component: ML Eval Kit:Voice:Keyword spotting
+    - component: Machine Learning:MLEK:CommonUtils
+    - component: Machine Learning:MLEK:FwkInterface
+    - component: Machine Learning:MLEK:FwkImpl&TensorFlowLiteMicro
+    - component: Machine Learning:MLEK:Log
+    - component: Machine Learning:MLEK:Math
+    - component: Machine Learning:MLEK:UseCase&Keyword spotting
 
   layers:
     - layer: $KWS-Board-Layer$
