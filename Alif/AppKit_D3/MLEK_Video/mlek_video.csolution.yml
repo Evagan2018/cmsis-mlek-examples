@@ -28,6 +28,12 @@ solution:
       ASM:
         - -gdwarf-5
 
+  # Temporary workaround for libc++ 23 transitive-include removals.
+  # The macro workaround is suitable for CLANG 23 testing, but LLVM documents that it will be removed in LLVM 24
+    - for-compiler: CLANG
+      C-CPP:
+        - -D_LIBCPP_KEEP_TRANSITIVE_INCLUDES_LLVM23
+
   packs:
     - pack: ARM::V2M_MPS3_SSE_300_BSP@^1.5.0
     - pack: ARM::V2M_MPS3_SSE_310_BSP@^1.4.0
