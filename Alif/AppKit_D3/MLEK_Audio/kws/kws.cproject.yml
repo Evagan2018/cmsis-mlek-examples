@@ -45,6 +45,8 @@ project:
         - CMSIS-RTOS2
 
   define:
+    - ARM_NN_ENABLE_F32: 1
+    - ARM_NN_ENABLE_F16: 1
     - ACTIVATION_BUF_SZ: 131072
 
   add-path:
