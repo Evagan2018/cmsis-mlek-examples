@@ -46,5 +46,5 @@ solution:
     - project: TFLiteRT_HelloWorld.cproject.yml
   packs:
     - pack: AlifSemiconductor::Ensemble
-    - pack: ARM::CMSIS
+    - pack: ARM::CMSIS@6.4.0
   compiler: AC6

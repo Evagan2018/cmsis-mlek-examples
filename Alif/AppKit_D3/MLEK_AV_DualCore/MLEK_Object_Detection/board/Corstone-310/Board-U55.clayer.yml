@@ -14,7 +14,7 @@ layer:
     - ARM_MODEL_USE_PMU_COUNTERS
 
   packs:
-    - pack: ARM::CMSIS
+    - pack: ARM::CMSIS@6.4.0
     - pack: ARM::V2M_MPS3_SSE_310_BSP@1.4.0
 
   components:

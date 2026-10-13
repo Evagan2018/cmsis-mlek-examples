@@ -33,7 +33,7 @@ solution:
     - pack: ARM::SSE_315_BSP@^1.0.0
     - pack: ARM::SSE_320_BSP@^1.0.0
     - pack: AlifSemiconductor::Ensemble
-    - pack: ARM::CMSIS
+    - pack: ARM::CMSIS@6.4.0
 
   build-types:
     - type: Debug-Live_Stream
